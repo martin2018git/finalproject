@@ -1,8 +1,7 @@
 # ConsenSys 2018 Final Project Reporistory 
-========================================
 
 ## 1 PROJECT DESCRIPTION: 
-    The smart contract implements a process for purchasing a property by pooling individual ownership contributions
+- The smart contract implements a process for purchasing a property by pooling individual ownership contributions
     and then electing a manager who will maintain and rent out the property for income to owners (investors.) 
     The contract allows for owners to contribute making key decisions about needed maintenance, approving expenses,
     reassigning the manager's responsibilities to a new manager. The manager also is responsible for leasing the property
@@ -10,9 +9,7 @@
     then deposited to individual ivnestor's accounts (they have to pull the funds though.) Fianlly, after a period of
     renting the contract allows for the owners to agree on the property sale and manage the closing process.
     
-    Key roles interracting with the smart contract:
-
-[https://github.com/martin2018git/finalproject/blob/master/images/roles.png]
+- Key roles interracting with the smart contract are shown on this diagram: (https://github.com/martin2018git/finalproject/blob/master/images/roles.png)
 
 ## 2 KEY USER STORIES: 
     - Setup of the contract
