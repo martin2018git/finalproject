@@ -1,4 +1,7 @@
 # ConsenSys 2018 Final Project Reporistory 
+## STATUS: Initial registration of the final project 
+- I am submitting this registration of my final project topic. Work is still in progress, but the current contract and libraries is fully functional and implemented in the truffle test framework.
+- Next I am goign to work on the UX design for the interaction with the smart contract, probably using Metamask framework.
 
 ## 1 PROJECT DESCRIPTION: 
 - The smart contract implements a process for purchasing a property by pooling individual ownership contributions
