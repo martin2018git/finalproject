@@ -7,8 +7,8 @@ module.exports = function(deployer) {
   deployer.deploy(Property);
   deployer.deploy(Investors);
   //deployer.deploy(PropertyContractInterface);
-  //deployer.link(Property, PropertyContract);
-  //deployer.link(Investors, PropertyContract);
-  deployer.autolink();
+  deployer.link(Property, PropertyContract);
+  deployer.link(Investors, PropertyContract);
+  //deployer.autolink();
   deployer.deploy(PropertyContract);
 };

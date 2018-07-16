@@ -4,11 +4,14 @@ var PropertyContract = artifacts.require('PropertyContract')
 
 contract('PropertyContract', function(accounts) {
 
+  // first, define the roles of the different parties */
     const owner = accounts[0]
     const manager = accounts[1]
     const investor_1 = accounts[2]
     const investor_2 = accounts[3]
     const investor_3 = accounts[4]
+    const seller = accounts[5]
+    const buyer = accounts[6]
     const emptyAddress = '0x0000000000000000000000000000000000000000'
 
     //const price = 100; //web3.toWei(1, "ether")
@@ -64,7 +67,7 @@ contract('PropertyContract', function(accounts) {
 
     var balanceBefore = await web3.eth.getBalance(investor_1).toNumber();
     var price = 6000;
-    var amount = 0;//web3.toWei(price, "wei")
+    var amount = web3.toWei(price, "wei")
     await property.submitBid( "inv01@gmail.com", price, {from: investor_1, value: amount} );
     var balanceAfter = await web3.eth.getBalance(investor_1).toNumber();
     assert.equal(eventEmitted1, true, 'BID#1 should emit Bid event');
@@ -76,7 +79,6 @@ contract('PropertyContract', function(accounts) {
     });
 
   });
-
 
   it("[Step 3] Investor#2 bid should succeed", async function() {
          const property = await PropertyContract.deployed()
@@ -92,7 +94,7 @@ contract('PropertyContract', function(accounts) {
          })
 
          price = 5000;
-         amount = 0; //web3.toWei(price, "wei")
+         amount = web3.toWei(price, "wei")
          await property.submitBid( "inv02@gmail.com", price, {from: investor_2, value: amount} );
          assert.equal( eventEmitted2, true, 'BID#2 should emit Bid event');
          assert.equal( points2, 500, 'BID#2 points incorrectly calculated');
@@ -105,7 +107,7 @@ contract('PropertyContract', function(accounts) {
 
   });
 
-  it("[Step 4] Investor#3 bid should fail", async() => {
+  it("[Step 4] Investor#3 bid should fail, all points were allocated, nothing is left", async() => {
       const property = await PropertyContract.deployed()
       var revertFlg=1;
       try{
@@ -120,7 +122,7 @@ contract('PropertyContract', function(accounts) {
         })
 
         price = 1000;
-        amount = 0;//web3.toWei(price, "wei")
+        amount = web3.toWei(price, "wei")
         await property.submitBid( "inv03@gmail.com", price, {from: investor_3, value: amount} );
 
         revertFlg = 0;
@@ -132,108 +134,117 @@ contract('PropertyContract', function(accounts) {
       assert.equal( eventEmitted3, false, 'Revert succeeded - yet BID#3 should not emit Bid event');
 
       const count3 = await property.getCountOfInvestors();
-      assert.equal( count3.toNumber(), T, 'Only two investors were expected');
+      assert.equal( count3.toNumber(), 2, 'Only two investors were expected');
 
-    /* investor 3 sends money - but is over the limit
+      const totalPoints = await property.getTotalPoints();
+      assert.equal( totalPoints.toNumber(), 1100, 'Distributed points do not tally up');
 
-    eventEmitted = false;
-    event = property.Bid()
-    points = 0
-    who = 0
-    await event.watch((err, res) => {
-        points = res.args._points.toString();
-        who = res.args._who.toString();
-        eventEmitted = true;
-    })
+  });
 
-    price = 1000;
-    amount = web3.toWei(price, "wei")
-    await property.submitBid( "inv03@gmail.com", price, {from: investor_3, value: amount} );
-    assert.equal( eventEmitted3, true, 'BID#3 should emit Bid event');
-    assert.equal( points2, 500, 'BID#3 points incorrectly calculated');
+  it("[Step 5] End bidding and close the purchase", async() => {
+     const property = await PropertyContract.deployed()
 
-    state = await property.getPropertyStatus.call()
-    assert.equal( state, "Bidding", 'status mismatch Bidding')
+     eventEmitted5 = false;
+     event5 = property.Financials()
+     await event5.watch((err, res) => {
+         code5 = res.args._code.toString();
+         who5 = res.args._who.toString();
+         amount5 = res.args._amount.toNumber();
+         points5 = res.args._points.toNumber();
+         eventEmitted5 = true;
+     })
 
+     await property.closePurchase( seller, 9000, 150 );
 
-    assert.equal( 1, count, 'number of investor records is not matching');
-    assert.equal( investor_1, inv01[1], 'investor address mismatch');
-    assert.equal( email, inv01[2], 'investor contacts mismatch');
-    assert.equal( 600, inv01[3], 'awarded points do not match');
-    assert.equal( 600, inv01[4], 'awarded shares do not match');
+     assert.equal( eventEmitted5, true, 'Purchase was not successful completed');
+     // change to false to see transmitted events
 
-    assert.equal( 0, (balanceBefore-balanceAfter), "amounts should not change" );
-*/
+     state = await property.getPropertyStatus.call()
+     assert.equal( state, "Purchased", 'status mismatch - should be now Purchased')
+
+     const totalPoints = await property.getTotalPoints();
+     assert.equal( totalPoints.toNumber(), 1000, 'Distributed points do not tally up');
+
+  });
+
+  it("[Step 6] Seller then withdraws funds", async() => {
+     const property = await PropertyContract.deployed()
+
+     eventEmitted6 = false;
+     event6 = property.Financials()
+     await event6.watch((err, res) => {
+         code = res.args._code.toString();
+         if( code=="seller-withdrawal" ){
+            code6 =  code;
+            who6 = res.args._who.toString();
+            amount6 = res.args._amount.toNumber();
+            points6 = res.args._points.toNumber();
+            eventEmitted6 = true;
+          }//if
+     })
+
+     await property.withdrawBySeller( {from: seller} );
+
+     assert.equal( code6, "seller-withdrawal", 'Seller did not withdraw funds');
+     assert.equal( amount6, 9000, 'Seller did not withdraw the full agreed sale price');
+
+     state = await property.getPropertyStatus.call()
+     assert.equal( state, "OffMarket", 'status mismatch - should be now available for leasing')
   });
 
 
-  /*  it("should allow someone to purchase an item", async() => {
-        const supplyChain = await SupplyChain.deployed()
 
-        var eventEmitted = false
+  it("[Step 7] Test selling the propoerty", async() => {
+     const property = await PropertyContract.deployed()
 
-        var event = supplyChain.Sold()
-        await event.watch((err, res) => {
-            sku = res.args.sku.toString(10)
-            eventEmitted = true
-        })
+     await property.beginSale( 20000 );
 
-        const amount = web3.toWei(2, "ether")
+     state = await property.getPropertyStatus.call()
+     assert.equal( state, "ForSale", 'status mismatch - should be now available for sale')
 
-        var aliceBalanceBefore = await web3.eth.getBalance(alice).toNumber()
-        var bobBalanceBefore = await web3.eth.getBalance(bob).toNumber()
+     await property.closeSale( buyer, 18000, 900 );
 
-        await supplyChain.buyItem(sku, {from: bob, value: amount})
+     eventEmitted7 = false;
+     event7 = property.Financials()
+     await event7.watch((err, res) => {
+       code = res.args._code.toString();
+       if( code=="buyer-deposit" ){
+            code7 = code;
+            who7 = res.args._who.toString();
+            amount7 = res.args._amount.toNumber();
+            points7 = res.args._points.toNumber();
+            eventEmitted7 = true;
+        }
+     })
 
-        var aliceBalanceAfter = await web3.eth.getBalance(alice).toNumber()
-        var bobBalanceAfter = await web3.eth.getBalance(bob).toNumber()
 
-        const result = await supplyChain.fetchItem.call(sku)
+     await property.depositBuyerFunds( 18000, {from: buyer, value: 18000} );
 
-        assert.equal(result[3].toString(10), 1, 'the state of the item should be "Sold", which should be declared second in the State Enum')
-        assert.equal(result[5], bob, 'the buyer address should be set bob when he purchases an item')
-        assert.equal(eventEmitted, true, 'adding an item should emit a Sold event')
-        assert.equal(aliceBalanceAfter, aliceBalanceBefore + parseInt(price, 10), "alice's balance should be increased by the price of the item")
-        assert.isBelow(bobBalanceAfter, bobBalanceBefore - price, "bob's balance should be reduced by more than the price of the item (including gas costs)")
-    })
+     state = await property.getPropertyStatus.call()
+     assert.equal( state, "Sold", 'sale closing was not completed')
 
-    it("should allow the seller to mark the item as shipped", async() => {
-        const supplyChain = await SupplyChain.deployed()
+     assert.equal( code7, "buyer-deposit", 'Buyer did not deposit agreed funds');
+     assert.equal( eventEmitted7, true, 'Selling price not remitted');
+     // change to false to see transmitted events
+     assert.equal( amount7, 18000, 'Sale price does not match agreed amount');
 
-        var eventEmitted = false
+  });
 
-        var event = supplyChain.Shipped()
-        await event.watch((err, res) => {
-            sku = res.args.sku.toString(10)
-            eventEmitted = true
-        })
 
-        await supplyChain.shipItem(sku, {from: alice})
 
-        const result = await supplyChain.fetchItem.call(sku)
+    it("[Step 8] Investors withdraw their share of sale proceeds", async() => {
+       const property = await PropertyContract.deployed()
 
-        assert.equal(eventEmitted, true, 'adding an item should emit a Shipped event')
-        assert.equal(result[3].toString(10), 2, 'the state of the item should be "Shipped", which should be declared third in the State Enum')
-    })
+       var balanceBefore = await web3.eth.getBalance(owner).toNumber();
+       await property.disposeOfProperty();
+       var balanceAfter = await web3.eth.getBalance(owner).toNumber();
 
-    it("should allow the buyer to mark the item as received", async() => {
-        const supplyChain = await SupplyChain.deployed()
+       // check if the returned amount is less than 5%
+       change = ( balanceAfter - balanceBefore - 18000 ) % 1000000;
+       const check = ( change/18000 ) < 5;
+       assert.equal( check, true, 'Any remainign amount on the contract should be less than 5%')
+    });
 
-        var eventEmitted = false
 
-        var event = supplyChain.Received()
-        await event.watch((err, res) => {
-            sku = res.args.sku.toString(10)
-            eventEmitted = true
-        })
-
-        await supplyChain.receiveItem(sku, {from: bob})
-
-        const result = await supplyChain.fetchItem.call(sku)
-
-        assert.equal(eventEmitted, true, 'adding an item should emit a Shipped event')
-        assert.equal(result[3].toString(10), 3, 'the state of the item should be "Received", which should be declared fourth in the State Enum')
-    })
-*/
 
 });

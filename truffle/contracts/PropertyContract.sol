@@ -33,7 +33,7 @@ contract PropertyContract //is PropertyContractInterface
   // logs any changes in ovenrship
   event OwnershipTransfer( address _from, address _to, uint _points );
   // logs any financial transfers
-  event Financials( uint _code, address _who, uint _amount, uint _points);
+  event Financials( string _code, address _who, uint _amount, uint _points);
   /* types:  1-ownrship purchase
              2-ownership sale
              3-seller payment
@@ -122,7 +122,7 @@ contract PropertyContract //is PropertyContractInterface
       //Property.initialize( property, _id, _name, _propertyAddress, _titleAgent, _titleContact );
       property.initialize( _id, _name, _propertyAddress, _titleAgent, _titleContact );
       //Investors.initialize( investors );
-      investors.initialize();
+      //investors.initialize();
       state = Property.State.New;
       emit Debug( 1, "initialize()" );
       return( true );
@@ -151,6 +151,10 @@ contract PropertyContract //is PropertyContractInterface
       function getCountOfInvestors() external view returns(uint _len){
           //_len = Investors.getCount( investors );
           _len = investors.getCount();
+      }
+
+      function getTotalPoints() external view returns(uint _points){
+          _points = investors.getTotalPoints();
       }
 
       function getInvestorDetails( address _who )
@@ -226,7 +230,7 @@ contract PropertyContract //is PropertyContractInterface
      function submitBid(
        string _myContact,
        uint _myAmount
-    )  //payable
+    )  payable
        public
        hasState( Property.State.Bidding )
      // @ submit bids until all points are allocated
@@ -237,6 +241,18 @@ contract PropertyContract //is PropertyContractInterface
        uint _points = _myAmount / property.unitPrice;
        //Investors.submitInvestorBid( investors, msg.sender, _myContact, _myAmount, _points);
        investors.submitInvestorBid( msg.sender, _myContact, _myAmount, _points);
+
+       //investors.count++;
+       /*investors.investorsVector[msg.sender].index = investors.count;
+       investors.investorsVector[msg.sender].holder = msg.sender;
+       investors.investorsVector[msg.sender].holderContact = _myContact;
+       investors.investorsVector[msg.sender].unclaimedEther = 0;
+       investors.investorsVector[msg.sender].bidAmount = _myAmount;
+       investors.investorsVector[msg.sender].ownershipPoints = _points;
+       investors.investorsVector[msg.sender].proceedsAmount = 0;
+       investors.investorsVector[msg.sender].lockedPoints = 0;
+       investors.investorAddr[investors.count] = msg.sender;*/
+
        property.totalPoints += _points;
        emit Bid( msg.sender, _points );
      }//submitBid
@@ -258,17 +274,38 @@ contract PropertyContract //is PropertyContractInterface
         property.propertyPrice = _actualPrice;
         property.closingCosts = _actualClosingCost;
 
+        uint _totalRaised = investors.getAmountRaised();
+        uint _totalPoints = investors.getTotalPoints();
+        emit Financials( "total-raised", owner, _totalRaised, _totalPoints );
+        emit Financials( "proposed-reserve", owner, property.reserveAmount, 0 );
+
         // closing finances
         seller = _seller;
         unlockSellerFunds = _actualPrice;
         // pay the owner the closing expenses
         unlockClosingCosts = property.closingCosts;
+
+        uint totalInvestment = _actualPrice + _actualClosingCost + property.reserveAmount;
         // unlock funds for returning unused investments, users have to claim them back
+        investors.confirmAllocatedPoints( 1000, totalInvestment );
         //Investors.unlockOverpayments( investors, _actualPrice+_actualClosingCost+property.reserveAmount );
-        investors.unlockOverpayments( _actualPrice+_actualClosingCost+property.reserveAmount );
+        investors.unlockOverpayments();
         // check if the reserve amount is positive (possible overflow!)
         //property.reserveAmount = _actualPrice-_actualClosingCost-Investors.getAmountRaised(investors);
-        property.reserveAmount = _actualPrice - _actualClosingCost - investors.getAmountRaised();
+        _totalRaised = investors.getAmountRaised();
+        _totalPoints = investors.getTotalPoints();
+        emit Financials( "total-allocated", owner, _totalRaised, _totalPoints );
+        emit Financials( "purchase-price", seller, _actualPrice, 0 );
+        emit Financials( "closing-costs", owner, property.closingCosts, 0 );
+
+        if( _totalRaised > _actualPrice + _actualClosingCost ){
+            property.reserveAmount = _totalRaised - _actualPrice - _actualClosingCost;
+        }
+
+        emit Financials( "initial-reserve", owner, property.reserveAmount, 0 );
+
+        uint _overpaid = investors. totalPendingWithdrawals();
+        emit Financials( "returns-overpayments", 0, _overpaid, 0 );
         state = Property.State.Purchased;
         return(true);
       }//closeBidding
@@ -285,8 +322,9 @@ contract PropertyContract //is PropertyContractInterface
          require( unlockSellerFunds>0 );
          uint _amount = unlockSellerFunds;
          unlockSellerFunds = 0;
-         state = Property.State.Available;
+         state = Property.State.OffMarket;
          seller.transfer(_amount);
+         emit Financials( "seller-withdrawal", seller, _amount, 0 );
          return( true );
        }//settleSellerFunds
 
@@ -398,6 +436,7 @@ contract PropertyContract //is PropertyContractInterface
             //Investors.calculateShareOfSaleProceeds( investors, _funds );
             investors.calculateShareOfSaleProceeds( _funds );
 
+            emit Financials( "sale-closing", buyer, _agreedPrice, 0 );
             return( true );
         }//close Sale
 
@@ -413,6 +452,8 @@ contract PropertyContract //is PropertyContractInterface
          {
              require( _agreedPrice == msg.value );
              require( _agreedPrice == property.propertyPrice );
+
+             emit Financials( "buyer-deposit", msg.sender, _agreedPrice, 0 );
 
              // allow owners now retrieve their proceeds
              //Investors.unlockSaleProceeds( investors );
@@ -432,12 +473,14 @@ contract PropertyContract //is PropertyContractInterface
          ) external
            hasState( Property.State.Sold )
            isOwner()
+           returns( uint _undistributedFunds )
          {
            //uint undistributedFunds = Investors.totalPendingWithdrawals(investors);
-           uint undistributedFunds = investors.totalPendingWithdrawals();
+           _undistributedFunds = 0; //investors.totalPendingWithdrawals(); -- maybe allow if not more than 5%?
            // only if all  owners withdrew their amounts, then we can selfdestruct
-           require( undistributedFunds==0 );
-           selfdestruct( owner );
+           require( _undistributedFunds == 0 );
+
+           selfdestruct( owner );  // return any balance to the owner
          }//settle payment
 
 

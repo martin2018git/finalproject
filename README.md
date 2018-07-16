@@ -1,7 +1,7 @@
-ConsenSys 2018 Final Project Reporistory
+# ConsenSys 2018 Final Project Reporistory #
 ========================================
 
-1 PROJECT DESCRIPTION:
+# 1 PROJECT DESCRIPTION: #
     The smart contract implements a process for purchasing a property by pooling individual ownership contributions
     and then electing a manager who will maintain and rent out the property for income to owners (investors.) 
     The contract allows for owners to contribute making key decisions about needed maintenance, approving expenses,
@@ -10,17 +10,17 @@ ConsenSys 2018 Final Project Reporistory
     then deposited to individual ivnestor's accounts (they have to pull the funds though.) Fianlly, after a period of
     reanting the contract allows for the owners to agree on the property sale and manage the closing process.
 
-2 KEY USER STORIES:
-    1) Setup of the contract
-    2) Managing purchase of the property
-    3) Managing sale of the property
-    4) Managing leasing of the property, including performing needed maintenance
-    5) Managing voting among the owners on key property decisions (i.e. service or sale)
-    6) Managing transfer of the ownership between owners and new investors
+# 2 KEY USER STORIES: #
+    - Setup of the contract
+    - Managing purchase of the property
+    - Managing sale of the property
+    - Managing leasing of the property, including performing needed maintenance
+    - Managing voting among the owners on key property decisions (i.e. service or sale)
+    - Managing transfer of the ownership between owners and new investors
 
-3 DETAILED USER STORIES:
+# 3 DETAILED USER STORIES: #
 
-  User Story #2: PURCHASING A PROPERTY
+  - User Story #2: PURCHASING A PROPERTY
      1) the story starts with @owner settign up the @property and open it
         for bidding using #openForBidding method.
      2) Individual candidates then submit their bids using #submitBid method,
@@ -39,7 +39,7 @@ ConsenSys 2018 Final Project Reporistory
      7) Finally both successful and unsuccessful bidders can withdraw the unused
         funds by calling individually the #withdrawFunds method.
 
-  User Story #3: SELLING PROPERTY
+  - User Story #3: SELLING PROPERTY
     1) Once @owners approve the property to be sold, the owner initiates
        the sale by invoking #beginSale with a given @askingPrice.
     2) If the property does not have any interested buyers, the @owner can initiate
@@ -62,3 +62,4 @@ ConsenSys 2018 Final Project Reporistory
 
 History:
   10JUL2018 ML  Initial setup
+  15JUL2018 ML  Finsihed purchasing and selling process (version 1)
