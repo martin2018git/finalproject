@@ -1,7 +1,7 @@
-# ConsenSys 2018 Final Project Reporistory #
+# ConsenSys 2018 Final Project Reporistory 
 ========================================
 
-## 1 PROJECT DESCRIPTION: ##
+## 1 PROJECT DESCRIPTION: 
     - The smart contract implements a process for purchasing a property by pooling individual ownership contributions
     and then electing a manager who will maintain and rent out the property for income to owners (investors.) 
     The contract allows for owners to contribute making key decisions about needed maintenance, approving expenses,
@@ -11,9 +11,9 @@
     renting the contract allows for the owners to agree on the property sale and manage the closing process.
     - Key roles interracting with the smart contract:
 
-[(https://github.com/martin2018git/finalproject/blob/master/images/roles.png)]
+[https://github.com/martin2018git/finalproject/blob/master/images/roles.png]
 
-## 2 KEY USER STORIES: ##
+## 2 KEY USER STORIES: 
     - Setup of the contract
     - Managing purchase of the property
     - Managing sale of the property
@@ -21,9 +21,9 @@
     - Managing voting among the owners on key property decisions (i.e. service or sale)
     - Managing transfer of the ownership between owners and new investors
 
-## 3 DETAILED USER STORIES: ##
+## 3 DETAILED USER STORIES: 
 
-  - User Story #2: PURCHASING A PROPERTY
+  ### 3.1 - User Story #2: PURCHASING A PROPERTY
      1) the story starts with @owner settign up the @property and open it
         for bidding using #openForBidding method.
      2) Individual candidates then submit their bids using #submitBid method,
@@ -42,7 +42,7 @@
      7) Finally both successful and unsuccessful bidders can withdraw the unused
         funds by calling individually the #withdrawFunds method.
 
-  - User Story #3: SELLING PROPERTY
+  ### 3.2 - User Story #3: SELLING PROPERTY
     1) Once @owners approve the property to be sold, the owner initiates
        the sale by invoking #beginSale with a given @askingPrice.
     2) If the property does not have any interested buyers, the @owner can initiate
@@ -63,6 +63,6 @@
        retrieved the @owner can destroy the contract.
 
 
-### History: ###
+### History: 
   10JUL2018 ML  Initial setup
   15JUL2018 ML  Finsihed purchasing and selling process (version 1)
