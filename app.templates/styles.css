@@ -1,0 +1,49 @@
+
+body {
+ background-color:#F0F0F0;
+ padding: 2em;
+ font-family: ‘Raleway’,’Source Sans Pro’, ‘Arial’;
+}
+
+.main-frame {
+ width: 100%;
+ margin: 0 auto;
+ //border: solid 1px red;
+}
+
+.main-menu {
+ display:block;
+ width: 200px;
+ background-color: #fff;
+ margin-right:10px;
+}
+
+.main-menu-level1 {
+  border: solid 1px navy;
+}
+
+.main-menu-level2 {
+  border: solid 1px navy;
+}
+
+input {
+ padding:10px;
+ width: 600px;
+ margin-bottom: 1em;
+}
+
+button {
+ margin: 2em 0;
+ padding: 1em 4em;
+ width: 100px;
+ background-color: navy;
+ display:block;
+}
+
+#messagebox {
+ padding:1em;
+ background-color:#fff;
+ margin: 1em 0;
+ border: solid 2px green;
+ content: "no-msg"
+}

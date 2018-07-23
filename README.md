@@ -1,16 +1,20 @@
-# ConsenSys 2018 Final Project Reporistory #
-========================================
+# ConsenSys 2018 Final Project Reporistory
+## STATUS: Initial registration of the final project
+- I am submitting this registration of my final project topic. Work is still in progress, but the current contract and libraries is fully functional and implemented in the truffle test framework.
+- Next I am goign to work on the UX design for the interaction with the smart contract, probably using Metamask framework.
 
-# 1 PROJECT DESCRIPTION: #
-    The smart contract implements a process for purchasing a property by pooling individual ownership contributions
-    and then electing a manager who will maintain and rent out the property for income to owners (investors.) 
+## 1 PROJECT DESCRIPTION:
+- The smart contract implements a process for purchasing a property by pooling individual ownership contributions
+    and then electing a manager who will maintain and rent out the property for income to owners (investors.)
     The contract allows for owners to contribute making key decisions about needed maintenance, approving expenses,
     reassigning the manager's responsibilities to a new manager. The manager also is responsible for leasing the property
-    and collecting rent. The rent is added to property reserve and the balance, minus required maintenance minimum, is 
+    and collecting rent. The rent is added to property reserve and the balance, minus required maintenance minimum, is
     then deposited to individual ivnestor's accounts (they have to pull the funds though.) Fianlly, after a period of
-    reanting the contract allows for the owners to agree on the property sale and manage the closing process.
+    renting the contract allows for the owners to agree on the property sale and manage the closing process.
 
-# 2 KEY USER STORIES: #
+- Key roles interracting with the smart contract are shown on this diagram: (https://github.com/martin2018git/finalproject/blob/master/images/roles.png)
+
+## 2 KEY USER STORIES:
     - Setup of the contract
     - Managing purchase of the property
     - Managing sale of the property
@@ -18,9 +22,20 @@
     - Managing voting among the owners on key property decisions (i.e. service or sale)
     - Managing transfer of the ownership between owners and new investors
 
-# 3 DETAILED USER STORIES: #
+## 3 KEY MODULES:
 
-  - User Story #2: PURCHASING A PROPERTY
+  ### PropertyContract
+  PropertyCOntract is the main object that interracts with all roles and users. The business logic is coded here along with state transtion logic and verifications of input values.
+
+  ### Property Library
+  This library implements Property object and related methods that are specific to maintiang the property.
+
+  ### Investors Library
+  This library implement the dynamic arrays for maintaining all investors records, and implements methods that are internally callable, such as distributing the share ownership, recording fund deposits, and calclating shares form sale proceeds, etc.
+
+## 4 DETAILED USER STORIES:
+
+  ### 4.1 - User Story #1: PURCHASING A PROPERTY
      1) the story starts with @owner settign up the @property and open it
         for bidding using #openForBidding method.
      2) Individual candidates then submit their bids using #submitBid method,
@@ -39,7 +54,7 @@
      7) Finally both successful and unsuccessful bidders can withdraw the unused
         funds by calling individually the #withdrawFunds method.
 
-  - User Story #3: SELLING PROPERTY
+  ### 4.2 - User Story #2: SELLING PROPERTY
     1) Once @owners approve the property to be sold, the owner initiates
        the sale by invoking #beginSale with a given @askingPrice.
     2) If the property does not have any interested buyers, the @owner can initiate
@@ -59,7 +74,8 @@
     5) Once all funds were retrieved and all the unlocked amounts were
        retrieved the @owner can destroy the contract.
 
-
-History:
+## Appendix
+### History of key changes:
   10JUL2018 ML  Initial setup
   15JUL2018 ML  Finsihed purchasing and selling process (version 1)
+  21JUL2018 ML  Added basic Web3 front end to interact with the smart contract
