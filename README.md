@@ -24,6 +24,8 @@
     US-6. Managing transfer of the ownership between owners and new investors
 
 ### 2.1 User story: purchasing property
+![User Story - Purchasing Property](https://github.com/martin2018git/finalproject/blob/master/images/userstory1.png)
+
 
 ## 3 KEY MODULES:
 
