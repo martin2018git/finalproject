@@ -23,17 +23,17 @@
     US-5. Managing voting among the owners on key property decisions (i.e. service or sale)
     US-6. Managing transfer of the ownership between owners and new investors
 
-### 2.1 User story: purchasing property
-![User Story - Purchasing Property](https://github.com/martin2018git/finalproject/blob/master/images/userstory1.png)
 
 
 ## 3 KEY MODULES:
 
+  ![Key Modules](https://github.com/martin2018git/finalproject/blob/master/images/libraries.png)
+
   ### PropertyContract
-  PropertyCOntract is the main object that interracts with all roles and users. The business logic is coded here along with state transtion logic and verifications of input values.
+  PropertyCOntract is the main object that interacts with all roles and users. The business logic is coded here along with state transition logic and verification of input values.
 
   ### Property Library
-  This library implements Property object and related methods that are specific to maintiang the property.
+  This library implements Property object and related methods that are specific to maintaining the property.
 
   ### Investors Library
   This library implement the dynamic arrays for maintaining all investors records, and implements methods that are internally callable, such as distributing the share ownership, recording fund deposits, and calculating shares form sale proceeds, etc.
@@ -41,6 +41,8 @@
 ## 4 DETAILED USER STORIES:
 
   ### 4.1 - User Story #1: PURCHASING A PROPERTY
+  ![User Story - Purchasing Property](https://github.com/martin2018git/finalproject/blob/master/images/userstory1.png)
+
      1. the story starts with @owner settign up the @property and open it
         for bidding using #openForBidding method.
      2. Individual candidates then submit their bids using #submitBid method,
@@ -60,6 +62,8 @@
         funds by calling individually the #withdrawFunds method.
 
   ### 4.2 - User Story #2: SELLING PROPERTY
+  ![User Story - Selling Property](https://github.com/martin2018git/finalproject/blob/master/images/userstory2.png)
+
     1. Once @owners approve the property to be sold, the owner initiates
        the sale by invoking #beginSale with a given @askingPrice.
     2. If the property does not have any interested buyers, the @owner can initiate
