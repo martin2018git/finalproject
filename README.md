@@ -46,18 +46,18 @@
      1. the story starts with @owner settign up the @property and open it
         for bidding using #openForBidding method.
      2. Individual candidates then submit their bids using #submitBid method,
-        until the totoal ownership points (set at 100.0%) are distributed.
-     3. The owner then closes bidding by starting the property pruchase closing
-        process, by invoiking the #closePurchase method. As part of the closing
+        until the total ownership points (set at 100.0%) are distributed.
+     3. The owner then closes bidding by starting the property purchase closing
+        process, by invoking the #closePurchase method. As part of the closing
         the property ownership points are confirmed and any overpaid funds are
         unlocked for withdrawal.
-     4. Seller then can witdraw the funds (purchase price) by calling
-        #withdrawSellerFunds, and pruchase Ether is transferred to his/her account.
+     4. Seller then can withdraw the funds (purchase price) by calling
+        #withdrawSellerFunds, and purchase Ether is transferred to his/her account.
      5. Owner can then also withdraw closing costs from the account using
         the agreed #withdrawCLosingFees and the remaining balance is left
         as @propertyReserve amount for servicing the property.
-     6. If the purchase was cancelled, the owner calls #cancelPurchase and
-        funds deposited by bidders are unlock so they can retireve them back.
+     6. If the purchase was canceled, the owner calls #cancelPurchase and
+        funds deposited by bidders are unlock so they can retrieve them back.
      7. Finally both successful and unsuccessful bidders can withdraw the unused
         funds by calling individually the #withdrawFunds method.
 
@@ -67,7 +67,7 @@
     1. Once @owners approve the property to be sold, the owner initiates
        the sale by invoking #beginSale with a given @askingPrice.
     2. If the property does not have any interested buyers, the @owner can initiate
-       another voting on a lowerd price. If @owners agreed on the lower price,
+       another voting on a lowered price. If @owners agreed on the lower price,
        the @owner can:
             a) readjust the sale price by re-calling #beginSale again, or
             b) cancel the sale by calling #cancelSale
@@ -78,13 +78,23 @@
        the contract will distribute the purchase price among the @owners, and
        unlock the funds for them to retrieve their share of proceeds individually.
        If any property reserveFunds are available they are added to the proceeds
-       for distribuytion among the owners.
+       for distribution among the owners.
     5. The owner can then call #withdrawClosingFees to pay for the agreed closing fees.
     6. Once all funds were retrieved and all the unlocked amounts were
        retrieved the @owner can destroy the contract.
 
-## Appendix
+## 5 SECURITY CONSIDERATIONS
+
+- the @owner of the contract has special privileges and can administer the contract, and invoke critical Eth flows in case of disputes. The contract owner may be an escrow attorney, or it may be a user who was voted by the investors to play the role.
+- status specific modifiers were added to each payable transactions
+- recursive calls and cycles were eliminated by implementing the decentralized "withdrawal" mechanism, aka "PULL PAYMENT" approach. This feature will prevent "cross-chain" reply attach scenario. In this case the smart contract unlocks the relevant amounts for each property investor so they can withdraw the funds on their own, without jeopardizing withdrawals by other investors.
+- for simple one time payment and payable transactions the "REENTRANCY" issue was eliminated by updating the contract status change first, so the necessary Eth transfer just happens all together or none at all
+
+
+## 6 APPENDIXES
+
 ### History of key changes:
-  10JUL2018 ML  Initial setup
-  15JUL2018 ML  Finsihed purchasing and selling process (version 1)
-  21JUL2018 ML  Added basic Web3 front end to interact with the smart contract
+  - 10JUL2018 ML  Initial setup
+  - 15JUL2018 ML  Finished purchasing and selling process (version 1)
+  - 21JUL2018 ML  Added basic Web3 front end to interact with the smart contract
+  - 16AUG2018 ML  Added workflow diagrams, improved documentation
