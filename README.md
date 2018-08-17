@@ -11,7 +11,8 @@
     then deposited to individual investor's accounts (they have to pull the funds though.) Finally, after a period of
     renting the contract allows for the owners to agree on the property sale and manage the closing process.
 
-- Key roles interacting with the smart contract are shown on this diagram: ![Roles](https://github.com/martin2018git/finalproject/images/roles.png)
+- Key roles interacting with the smart contract are shown on this diagram:
+![Roles](https://github.com/martin2018git/finalproject/blob/master/images/roles.png)
 
 
 ## 2 KEY USER STORIES:
