@@ -29,7 +29,6 @@ This window can be used for torubleshooting and verifying the blockchain transac
 > rm -r build/* -f
 
 5 Now start the truffle develop environment and recompile the smart contract and libraries
-> truffle develop
 > truffle> compile
 ![compile](../images/step-compile.png)
 
@@ -50,6 +49,21 @@ If all works fine, 8 tests should pass.
 1 Lunach the application server
 ![app-start](../images/step-start-app.png)
 
-2 Open browser and access the applicaiton server, a set of default menu items will compe up ina simple user interface screen
+2 Open browser and access the applicaiton server, a set of default menu items will comes up in a simple user interface screen
 ![app-menu](../images/step-app-menu.png)
+
+3 Check the status of the web server connecting to blockchain by clicking on Blockchain option:
+![app-blockchain](../images/app-blockchain.png)
+
+4 Initialize the application with the smart contract address (plug in the address obtained form the deploying screen above):
+![app-contract](../images/app-contract.png)
+
+5 Initialize the property smart contract for bidding:
+![app-property](../images/app-property.png)
+
+6 Open up the property contract for bidding:
+![app-new](../images/app-new.png)
+
+More interractive actions are now work in progress. For any inquiries e-mail me at: m_lhotak@hotmail.com
+
 
