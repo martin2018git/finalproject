@@ -26,20 +26,24 @@ This window can be used for torubleshooting and verifying the blockchain transac
 4 Clean up smart contract repository 
 > rm -r build/* -f
 
-5 Now recompile the smart contract and libraries
-> truffle compile
+5 Now start the truffle develop environment and recompile the smart contract and libraries
+> truffle develop
+> truffle> compile
+![compile](../images/step-compile.png)
 
 6 If all compiled without issues deploy the smart contract onto the test network
 > truffle migrate
+![deploy](../images/step-deploy.png)
 
 7 Look up the address of the deployed smart contract
 
 8 Now test the smart contract by running a truffle mocha test
 > truffle test
+![test](../images/step-test.png)
 If all works fine, 8 tests should pass.
 
 
 ## 3 APPLICATION EXAMPLE
 
 
-![Roles](https://github.com/martin2018git/finalproject/blob/master/images/roles.png)
+
