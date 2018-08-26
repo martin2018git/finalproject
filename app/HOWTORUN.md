@@ -64,6 +64,9 @@ If all works fine, 8 tests should pass.
 6 Open up the property contract for bidding:
 ![app-new](../images/app-new.png)
 
+If all above events were successful, you should see the smart contract event logs in the ganache-cli screen:
+![app-log](../images/app-log.png)
+
 More interractive actions are now work in progress. For any inquiries e-mail me at: m_lhotak@hotmail.com
 
 
