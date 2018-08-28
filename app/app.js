@@ -33,6 +33,9 @@ function debugLine(id,msg){
 //============= Blockchain interface functions ====================
 
 var account = "awaiting";
+var investor1 = "awaiting";
+var investor2 = "awaiting";
+var investor3 = "awaiting";
 var blockNumber = "awaiting";
 var balance = "awaiting";
 
@@ -53,6 +56,10 @@ function blockchainGetAccounts(){
     }
 
     account = accounts[0];
+    investor1 = accounts[1];
+    investor2 = accounts[2];
+    investor3 = accounts[3];
+
     console.log(account);
 
     web3.eth.getBalance(account,function(error, value) {
@@ -691,7 +698,7 @@ function blockchainGetAccounts(){
      console.log(result);
      propStatus = result;
    });
-
+0xeb839bfa4710584078871df2bc5f72d53df1ea4d
    return( "Bidding can commence!" );
 
 }
@@ -715,17 +722,14 @@ function blockchainBid(propertyContract,invNum){
   var myContract = new web3.eth.Contract(ABI,propertyContract);
 
   if( invNum==1 ){
-    investor = "0x3d06bdf9a9c2ace9a75ae2004589c5608b767a00";
+    investor = investor1; //"0x3d06bdf9a9c2ace9a75ae2004589c5608b767a00";
     amount = 100000;
   }else if( invNum==2 ){
-      investor = "0xf8306b56f5c85a993b988b1f29d84efbf7c54a48";
+      investor = investor2; //"0xf8306b56f5c85a993b988b1f29d84efbf7c54a48";
       amount = 200000;
   }else if( invNum==3 ){
-      investor = "0x64644d2306b88ee641491fbe432459d8c7bafccf";
+      investor = investor3; //"0x64644d2306b88ee641491fbe432459d8c7bafccf";
       amount = 300000;
-  }else if( invNum==4 ){
-      investor = "0xd835ff65b9d2d0fb5d5fea6069e69493d8912168";
-      amount = 400000;
   }else{
       return("Must sepcify an investor number");
   }
@@ -739,6 +743,32 @@ function blockchainBid(propertyContract,invNum){
   });
 
   return( "Investor no."+invNum+" submitted a bid for "+amount+" wei!");
+
+}
+
+
+function blockchainGetBalance(propertyContract,invNum){
+  var myContract = new web3.eth.Contract(ABI,propertyContract);
+
+  if( invNum==1 ){
+    investor = investor1; //"0x3d06bdf9a9c2ace9a75ae2004589c5608b767a00";
+    amount = 100000;
+  }else if( invNum==2 ){
+      investor = investor2; //"0xf8306b56f5c85a993b988b1f29d84efbf7c54a48";
+      amount = 200000;
+  }else if( invNum==3 ){
+      investor = investor3; //"0x64644d2306b88ee641491fbe432459d8c7bafccf";
+      amount = 300000;
+  }else{
+      return("Must sepcify an investor number");
+  }
+
+  myContract.methods.checkAvailableFunds().send({from: investor, gas: 1500000, value:0}, function(err,result){
+    console.log(result);
+    propStatus = result;
+  });
+
+  return( "Investor no."+invNum+" can withdraw up to: "+propStatus+" wei!");
 
 }
 
@@ -782,8 +812,12 @@ function formatMenu(selected){
   buf += formatMenuItem2("Close Purchase","/property-purchase",selected);
   buf += formatMenuItem2("Seller Payment","/property-seller-payment",selected);
   buf += formatMenuItem("Investors","/investors",selected);
-  buf += formatMenuItem2("Bid","/investors-bid",selected);
-  buf += formatMenuItem2("Get Balance","/investors-get-balance",selected);
+  buf += formatMenuItem2("Bid #1","/investors-bid/1",selected);
+  buf += formatMenuItem2("Bid #2","/investors-bid/2",selected);
+  buf += formatMenuItem2("Bid #3","/investors-bid/3",selected);
+  buf += formatMenuItem2("Get Balance #1","/investors-get-balance/1",selected);
+  buf += formatMenuItem2("Get Balance #2","/investors-get-balance/2",selected);
+  buf += formatMenuItem2("Get Balance #3","/investors-get-balance/3",selected);
   buf += formatMenuItem2("Withdrawal","/investors-withdrawal",selected);
   buf += formatMenuItem("Trading","/trade",selected);
   buf += formatMenuItem("Renting","/renting",selected);
@@ -930,13 +964,16 @@ app.get("/investors-bid/:id", function(req,res){
   sendPage(res,page);
 });
 
+app.get("/investors-get-balance/:id", function(req,res){
+  debugLine(0,"/investors-get-balance");
+  loadPageTemplate(page);
+  formatMenu("/investors-get-balance");
+  writeToCanvas(page, blockchainGetBalance(contractAddress,req.params.id) );
+  sendPage(res,page);
+});
+
 
 /*
-buf += formatMenuItem2("Commence Bidding","/property-bidding",selected);
-buf += formatMenuItem2("Close Purchase","/property-purchase",selected);
-buf += formatMenuItem2("Seller Payment","/property-seller-payment",selected);
-buf += formatMenuItem("Investors","/investors",selected);
-buf += formatMenuItem2("Bid","/investors-bid",selected);
 buf += formatMenuItem2("Get Balance","/investors-get-balance",selected);
 buf += formatMenuItem2("Withdrawal","/investors-withdrawal",selected);
 buf += formatMenuItem("Trading","/trade",selected);
